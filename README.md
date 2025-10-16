@@ -1,6 +1,6 @@
-# DemoBlaze Test Automation
+# Cato assignment Test Automation
 
-Automated testing for DemoBlaze e-commerce site using Playwright and pytest.
+Automated testing for DemoBlaze site using Playwright and pytest.
 
 ## Quick Start
 
