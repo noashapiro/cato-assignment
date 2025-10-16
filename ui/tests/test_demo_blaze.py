@@ -3,9 +3,7 @@ import allure
 
 class TestDemoBlaze:
     
-    @allure.feature("Catalog")
-    @allure.story("Product Display")
-    @allure.severity(allure.severity_level.CRITICAL)
+    @allure.title("Verify all products display with correct details")
     def test_display_all_products_with_correct_details(self, home_page):
         assert home_page.is_page_loaded(), "Home page did not load properly"
         home_page.wait_for_element(home_page.locators.PRODUCT_CARD)
@@ -15,9 +13,7 @@ class TestDemoBlaze:
         
         home_page.validate_product_display()
     
-    @allure.feature("Authentication")
-    @allure.story("User Login")
-    @allure.severity(allure.severity_level.CRITICAL)
+    @allure.title("Login with valid credentials")
     def test_login_with_valid_credentials(self, home_page):
         username = "123"
         home_page.wait_for_element(home_page.locators.PRODUCT_CARD)
@@ -30,14 +26,11 @@ class TestDemoBlaze:
             f"Expected username '{username}' to appear in '{logged_in_username}'"
         )
     
-    @allure.feature("Authentication")
-    @allure.story("User Login")
-    @allure.severity(allure.severity_level.NORMAL)
+    @allure.title("Login with empty credentials shows validation error")
     def test_login_with_empty_credentials(self, home_page):
         home_page.wait_for_element(home_page.locators.PRODUCT_CARD)
         home_page.click_login()
         home_page.fill_login_form(username="", password="")
-        
         dialog_message = home_page.submit_login_and_handle_dialog()
         
         assert dialog_message, "Expected dialog to appear but it didn't"

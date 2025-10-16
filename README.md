@@ -34,6 +34,8 @@ docker run --rm cato-tests
 
 ## Allure Reports
 
+### Local
+
 ```bash
 # Generate report
 pytest --alluredir=reports/allure
@@ -42,13 +44,14 @@ pytest --alluredir=reports/allure
 allure serve reports/allure
 ```
 
-## Project Structure
+### Docker
 
-```
-ui/
-├── locators/          # Element selectors
-├── pages/             # Page objects
-└── tests/             # Test cases
+```bash
+# Run tests and extract reports
+docker run --rm -v $(pwd)/reports:/app/reports cato-tests
+
+# View extracted report
+allure serve reports/allure
 ```
 
 ## Configuration

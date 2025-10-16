@@ -1,4 +1,5 @@
 import logging
+import allure
 from playwright.sync_api import Page
 from ui.pages.base_page import BasePage
 from ui.locators.home_page_locators import HomePageLocators
@@ -14,11 +15,13 @@ class HomePage(BasePage):
     def is_page_loaded(self) -> bool:
         return super().is_page_loaded(self.locators.NAVBAR_BRAND)
     
+    @allure.step("Get product count")
     def get_product_count(self) -> int:
         count = self.page.locator(self.locators.PRODUCT_CARD).count()
         logger.info(f"Found {count} products")
         return count
     
+    @allure.step("Get product details at index {index}")
     def get_product_details(self, index: int = 0) -> dict:
         product_card = self.page.locator(self.locators.PRODUCT_CARD).nth(index)
         name = product_card.locator(self.locators.PRODUCT_NAME).text_content()
@@ -29,6 +32,7 @@ class HomePage(BasePage):
             "price": price.strip() if price else ""
         }
     
+    @allure.step("Validate all products display correctly")
     def validate_product_display(self):
         products_count = self.get_product_count()
         
@@ -41,25 +45,30 @@ class HomePage(BasePage):
         
         logger.info(f"Validated {products_count} products")
     
+    @allure.step("Click login button")
     def click_login(self):
         logger.info("Opening login modal")
         self.page.locator(self.locators.LOGIN_BUTTON).click()
     
+    @allure.step("Fill login form with username: {username}")
     def fill_login_form(self, username: str, password: str):
         logger.info(f"Filling login form with username: '{username}'")
         self.page.locator(self.locators.LOGIN_USERNAME_FIELD).fill(username)
         self.page.locator(self.locators.LOGIN_PASSWORD_FIELD).fill(password)
     
+    @allure.step("Submit login form")
     def submit_login(self):
         logger.info("Submitting login form")
         self.page.get_by_role("button", name="Log in").click()
     
+    @allure.step("Get logged in username")
     def get_logged_in_username(self) -> str:
         self.page.wait_for_selector(self.locators.LOGGED_IN_USERNAME)
         username = self.page.locator(self.locators.LOGGED_IN_USERNAME).inner_text()
         logger.info(f"User logged in: {username}")
         return username
     
+    @allure.step("Submit login and handle dialog")
     def submit_login_and_handle_dialog(self) -> str:
         self.page.wait_for_selector(self.locators.LOGIN_USERNAME_FIELD, state="visible")
         
