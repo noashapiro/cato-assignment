@@ -1,0 +1,66 @@
+from playwright.sync_api import Page
+
+from ui.pages.base_page import BasePage
+
+
+class HomePage(BasePage):
+
+    def __init__(self, page: Page):
+        super().__init__(page)
+
+        # Selectors
+        self.product_cards = ".col-lg-4.col-md-6.mb-4"
+        self.product_name = ".card-title"
+        self.product_price = "h5"
+        self.product_image = ".card-img-top"
+        self.product_link = ".hrefch"
+        self.cart_link = "#cartur"
+        self.navbar_brand = ".navbar-brand"
+
+    def is_page_loaded(self) -> bool:
+        try:
+            navbar_visible = self.page.locator(self.navbar_brand).is_visible()
+            return navbar_visible
+        except Exception:
+            return False
+
+    def get_product_cards(self):
+        return self.page.locator(self.product_cards).all()
+
+    def get_product_count(self) -> int:
+        return self.page.locator(self.product_cards).count()
+
+    def validate_product_display(self):
+        products = self.get_product_cards()
+
+        for i in range(len(products)):
+            product = self.get_product_details(i)
+
+            # Validate product name exists and is not empty
+            assert product["name"], f"Product {i} name is empty"
+            assert len(product["name"]) > 0, f"Product {i} name is empty"
+
+            # Validate price exists and contains currency symbol
+            assert product["price"], f"Product {i} price is empty"
+            assert "$" in product["price"], f"Product {i} price doesn't contain $"
+
+            # # Validate image is visible
+            # expect(product["image"]).to_be_visible()
+            #
+            # # Validate link exists
+            # expect(product["link"]).to_be_visible()
+
+    def get_product_details(self, index: int = 0) -> dict:
+        product_card = self.page.locator(self.product_cards).nth(index)
+
+        name = product_card.locator(self.product_name).text_content()
+        price = product_card.locator(self.product_price).text_content()
+        image = product_card.locator(self.product_image)
+        link = product_card.locator(self.product_link)
+
+        return {
+            "name": name.strip() if name else "",
+            "price": price.strip() if price else "",
+            "image": image,
+            "link": link
+        }
